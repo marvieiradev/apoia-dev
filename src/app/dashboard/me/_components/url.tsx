@@ -2,9 +2,16 @@
 import { Button } from "@/components/ui/button";
 import { createUsername } from "../_actions/create-username";
 import { useState } from "react";
+import Link from "next/link";
+import { Link2 } from "lucide-react";
 
-export function UrlPreview() {
+interface UrlPreviewProps {
+  username: string | null;
+}
+
+export function UrlPreview({ username: slug }: UrlPreviewProps) {
   const [error, setError] = useState<null | string>(null);
+  const [username, setUsername] = useState(slug);
 
   async function submitAction(formData: FormData) {
     const username = formData.get("username") as string;
@@ -14,7 +21,35 @@ export function UrlPreview() {
     const response = await createUsername({ username });
     if (response.error) {
       setError(response.error);
+      return;
     }
+
+    if (response.data) {
+      setUsername(username);
+    }
+  }
+
+  if (!!username) {
+    return (
+      <div className="flex items-center justify-between flex-1 p-2 text-gray-100">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-center gap-2">
+          <h3 className="font-bold">Sua URL:</h3>
+          <Link
+            href={`${process.env.NEXT_PUBLIC_HOST_URL}/creator/${username}`}
+            target="_blank"
+          >
+            {process.env.NEXT_PUBLIC_HOST_URL}/creator/{username}
+          </Link>
+        </div>
+        <Link
+          href={`${process.env.NEXT_PUBLIC_HOST_URL}/creator/${username}`}
+          target="_blank"
+          className="bg-blue-500 px-4 py-1 rounded-md hidden md:flex hover:bg-blue-600 cursor-pointer"
+        >
+          <Link2 className="w-5 h-5 text-white" />
+        </Link>
+      </div>
+    );
   }
   return (
     <div className="w-full">
