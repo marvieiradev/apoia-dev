@@ -2,12 +2,18 @@ import { DonationTable } from "./_components/donates";
 import { Stats } from "./_components/analytics";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { getLoginOnboardAccount } from "./create-onboard-account";
+import { CreateAccountButton } from "./_components/create-account";
 
 export default async function Dashboard() {
   const session = await auth();
   if (!session?.user) {
     redirect("/");
   }
+
+  const accountUrl = await getLoginOnboardAccount(
+    session.user.connectedStripeAccountId
+  );
 
   return (
     <div className="p-4">
@@ -16,6 +22,17 @@ export default async function Dashboard() {
           <h1 className="text-2xl font-semibold">Minha conta</h1>
         </div>
       </section>
+
+      {accountUrl && (
+        <a
+          href={accountUrl}
+          className="bg-zinc-900 text-white px-4 py-1 rounded-md cursor-pointer"
+        >
+          Configurar conta
+        </a>
+      )}
+
+      {!session.user.connectedStripeAccountId && <CreateAccountButton />}
 
       <Stats />
 

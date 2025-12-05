@@ -24,6 +24,11 @@ export async function createPayment(data: CreatePaymentsSchema) {
   }
 
   try {
+    const creator = await prisma.user.findUnique({
+      where: {
+        id: data.creatorId,
+      },
+    });
   } catch (error) {
     return {
       data: null,

@@ -6,10 +6,11 @@ declare module "next-auth" {
   }
   interface User {
     id: string;
-    name?: string | null;
-    email?: string | null;
-    username?: string | null;
-    bio?: string | null;
-    image?: string | null;
+    name?: string;
+    email?: string;
+    username?: string;
+    bio?: string;
+    image?: string;
+    connectedStripeAccountId?: string;
   }
 }
