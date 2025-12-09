@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -55,18 +54,30 @@ export function FormDonate({ slug, creatorId }: FormDonateProps) {
       creatorId: creatorId,
     });
 
+    await handlePaymentResponse(checkout);
+  }
+
+  async function handlePaymentResponse(checkout: {
+    sessionId?: string;
+    error?: string;
+  }) {
     if (checkout.error) {
       toast.error(`Erro: ${checkout.error}`);
       return;
     }
-
-    if (checkout.data) {
-      const data = JSON.parse(checkout.data);
-      const stripe = await getStripeJs();
-      await stripe?.redirectToCheckout({ sessionId: data.id as string });
-      toast.success("Doação feita com sucesso!");
+    if (!checkout.sessionId) {
+      toast.error("Erro: Falha ao criar pagamento, tente mais tarde.");
       return;
     }
+
+    const stripe = await getStripeJs();
+
+    if (!stripe) {
+      toast.error("Erro: Falha ao criar pagamento, tente mais tarde.");
+      return;
+    }
+    await stripe?.redirectToCheckout({ sessionId: checkout.sessionId });
+    toast.success("Doação feita com sucesso!");
   }
 
   return (
