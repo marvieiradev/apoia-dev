@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { getInfoUser } from "./_data-access/get-info-user";
 import { notFound } from "next/navigation";
-import { use } from "react";
 import { FormDonate } from "./_components/form";
 
 export default async function Apoia({
@@ -58,7 +57,10 @@ export default async function Apoia({
             Apoie {user.name ?? "Nome do usuário"}:
           </h3>
 
-          <FormDonate slug={user.username!} creatorId={user.id} />
+          <FormDonate
+            slug={user.username!}
+            creatorId={user.connectedStripeAccountId || ""}
+          />
         </section>
       </div>
     </div>

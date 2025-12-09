@@ -3,7 +3,7 @@ import { Stats } from "./_components/analytics";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getLoginOnboardAccount } from "./create-onboard-account";
-import { CreateAccountButton } from "./_components/create-account";
+import { CreateAccountButton } from "./_components/create-account-button";
 
 export default async function Dashboard() {
   const session = await auth();

@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { stripe } from "@/lib/stripe";
 
 const createPaymentsSchema = z.object({
   slug: z.string().min(1, "Slug do criador é obrigatório"),
@@ -23,12 +24,73 @@ export async function createPayment(data: CreatePaymentsSchema) {
     };
   }
 
+  if (!data.creatorId) {
+    return {
+      data: null,
+      error: "Falha ao criar pagamento: Criador não encontrado",
+    };
+  }
+
   try {
-    const creator = await prisma.user.findUnique({
+    const creator = await prisma.user.findFirst({
       where: {
-        id: data.creatorId,
+        connectedStripeAccountId: data.creatorId,
       },
     });
+
+    if (!creator) {
+      return {
+        data: null,
+        error: "Falha ao criar pagamento: Criador não encontrado",
+      };
+    }
+
+    const applicationFeeAmount = Math.floor(data.price * 0.1); // 10% de taxa de aplicação
+
+    const donation = await prisma.donation.create({
+      data: {
+        donorName: data.name,
+        donorMessage: data.message,
+        userId: creator.id,
+        status: "PENDING",
+        amount: data.price - applicationFeeAmount,
+      },
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      success_url: `${process.env.HOST_URL}/creator/${data.slug}`,
+      cancel_url: `${process.env.HOST_URL}/creator/${data.slug}`,
+      line_items: [
+        {
+          price_data: {
+            currency: "brl",
+            product_data: {
+              name: `Apoiar ${creator.name}`,
+            },
+            unit_amount: data.price,
+          },
+          quantity: 1,
+        },
+      ],
+      payment_intent_data: {
+        application_fee_amount: applicationFeeAmount,
+        transfer_data: {
+          destination: creator.connectedStripeAccountId as string,
+        },
+        metadata: {
+          donorName: data.name,
+          donorMessage: data.message,
+          donationId: donation.id,
+        },
+      },
+    });
+
+    return {
+      data: JSON.stringify(session),
+      error: null,
+    };
   } catch (error) {
     return {
       data: null,
