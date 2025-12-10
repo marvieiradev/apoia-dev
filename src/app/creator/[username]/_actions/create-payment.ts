@@ -86,6 +86,7 @@ export async function createPayment(data: CreatePaymentsSchema) {
 
     return {
       sessionId: session.id,
+      url: session?.url,
     };
   } catch (error) {
     return {

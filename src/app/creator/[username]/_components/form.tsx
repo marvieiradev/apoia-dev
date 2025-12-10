@@ -60,12 +60,13 @@ export function FormDonate({ slug, creatorId }: FormDonateProps) {
   async function handlePaymentResponse(checkout: {
     sessionId?: string;
     error?: string;
+    url?: string | null;
   }) {
     if (checkout.error) {
       toast.error(`Erro: ${checkout.error}`);
       return;
     }
-    if (!checkout.sessionId) {
+    if (!checkout.sessionId || !checkout.url) {
       toast.error("Erro: Falha ao criar pagamento, tente mais tarde.");
       return;
     }
@@ -76,8 +77,8 @@ export function FormDonate({ slug, creatorId }: FormDonateProps) {
       toast.error("Erro: Falha ao criar pagamento, tente mais tarde.");
       return;
     }
-    await stripe?.redirectToCheckout({ sessionId: checkout.sessionId });
-    toast.success("Doação feita com sucesso!");
+    //await stripe?.redirectToCheckout({ sessionId: checkout.sessionId });
+    window.location.href = checkout?.url;
   }
 
   return (
