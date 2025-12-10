@@ -26,9 +26,9 @@ export async function POST(req: NextRequest) {
         paymentIntentId
       );
 
-      const donationId = session.metadata?.donationId;
-      const donorName = session.metadata?.donorName;
-      const donorMessage = session.metadata?.donorMessage;
+      const donationId = paymentIntent.metadata.donationId;
+      const donorName = paymentIntent.metadata.donorName;
+      const donorMessage = paymentIntent.metadata.donorMessage;
 
       try {
         const updateDonation = await prisma.donation.update({
