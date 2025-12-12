@@ -19,6 +19,13 @@ import { Label } from "@/components/ui/label";
 import { createPayment } from "../_actions/create-payment";
 import { toast } from "sonner";
 import { getStripeJs } from "@/lib/stripe-js";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const formSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório"),
@@ -82,80 +89,92 @@ export function FormDonate({ slug, creatorId }: FormDonateProps) {
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 mt-5 p-2 bg-white border border-gray-300 rounded-md"
-      >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Digite seu nome"
-                  {...field}
-                  className="bg-white"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <Card className="shadow-xl border-0 bg-white/95 backdrop-blur-sm h-fit">
+      <CardHeader>
+        <CardTitle className="text-xl sm:text-2xl font-bold text-gray-900">
+          Apoiar{" "}
+        </CardTitle>
+        <CardDescription>
+          Sua contribuição para manter o conteúdo
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 mt-5 p-2 bg-white border border-gray-300 rounded-md"
+          >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Digite seu nome"
+                      {...field}
+                      className="bg-white"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="message"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Mensagem</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Digite sua mensagem"
-                  {...field}
-                  className="bg-white h-35 resize-none"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="message"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mensagem</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Digite sua mensagem"
+                      {...field}
+                      className="bg-white h-35 resize-none"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="price"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Valor da doação</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex items-center gap-3"
-                >
-                  {["15", "25", "35"].map((value) => (
-                    <div
-                      key={value}
-                      className="flex items-center space-x-2 mt-2"
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Valor da doação</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex items-center gap-3"
                     >
-                      <RadioGroupItem value={value} id={value} />
-                      <Label className="text-lg" htmlFor={value}>
-                        R$ {value}
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Carregando" : "Fazer doação"}
-        </Button>
-      </form>
-    </Form>
+                      {["15", "25", "35"].map((value) => (
+                        <div
+                          key={value}
+                          className="flex items-center space-x-2 mt-2"
+                        >
+                          <RadioGroupItem value={value} id={value} />
+                          <Label className="text-lg" htmlFor={value}>
+                            R$ {value}
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? "Carregando" : "Fazer doação"}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }
