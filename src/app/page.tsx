@@ -42,7 +42,7 @@ export default function Home() {
                   <Button
                     type="submit"
                     size="lg"
-                    className="bg-amber-500 hover:bg-amber-600 text-white font-medium px-8 h-12"
+                    className="bg-amber-500 hover:bg-amber-600 text-white font-medium px-8 h-12 cursor-pointer"
                   >
                     Começar agora
                     <ArrowRight className="ml-2 h-4 w-4" />

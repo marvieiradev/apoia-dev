@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getLoginOnboardAccount } from "./_data-access/create-onboard-account";
 import { CreateAccountButton } from "./_components/create-account-button";
 import { getAllDonates } from "./_data-access/get-donate";
+import { getStripeDashboard } from "./_data-access/get-stripe-dashboard";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -12,11 +13,15 @@ export default async function Dashboard() {
     redirect("/");
   }
 
+  const urlStripeDashboard = await getStripeDashboard(
+    session.user?.connectedStripeAccountId
+  );
+
   const accountUrl = await getLoginOnboardAccount(
     session.user.connectedStripeAccountId
   );
 
-  const donates = await getAllDonates(session.user.id);
+  //const donates = await getAllDonates(session.user.id);
 
   return (
     <div className="p-4">
@@ -24,10 +29,11 @@ export default async function Dashboard() {
         <div className="w-full flex items-center gap-2 justify-between">
           <h1 className="text-2xl font-semibold">Minha conta</h1>
 
-          {accountUrl && (
+          {urlStripeDashboard && (
             <a
-              href={accountUrl}
+              href={urlStripeDashboard}
               className="bg-zinc-900 text-white px-4 py-1 rounded-md cursor-pointer"
+              target="_blank"
             >
               Configurar conta
             </a>
@@ -46,7 +52,7 @@ export default async function Dashboard() {
 
           <h2 className="text-2xl font-semibold mb-2">Últimas doações</h2>
 
-          <DonationTable data={donates.data} />
+          <DonationTable />
         </>
       )}
     </div>
